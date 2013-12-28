@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require base64
+
 directory '/opt' do
   mode '0755'
   owner 'root'
@@ -87,6 +89,11 @@ service 'splunk' do
 end
 
 if node['splunkstorm']['license_file']
+  if node['splunkstorm']['license_file_base64'] 
+    File.open(node['splunkstorm']['license_file'], "wb") do |file|
+      file.write(node['splunkstorm']['license_file_base64'].unpack('m').first)
+    end
+  end
   # the license file location was specified by the node config
   license_file = node['splunkstorm']['license_file']
 else
